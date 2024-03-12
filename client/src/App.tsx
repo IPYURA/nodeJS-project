@@ -1,70 +1,78 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 import Customer from "./components/Customer";
 import {
+  styled,
   Table,
   TableHead,
   TableBody,
   TableRow,
   TableCell,
-  styled,
+  CircularProgress,
 } from "@mui/material";
 
-// interface IInfo {
-//   id: string;
-//   name: string;
-//   image: string;
-//   birth: string;
-//   gender: string;
-//   job: string;
-// }
-
-const info = [
-  {
-    id: "1",
-    name: "조동건",
-    image: "https://picsum.photos/id/259/64/64",
-    birth: "980413",
-    gender: "남",
-    job: "대학생",
-  },
-  {
-    id: "2",
-    name: "강민주",
-    image: "https://picsum.photos/id/223/64/64",
-    birth: "981007",
-    gender: "여",
-    job: "대학생",
-  },
-  {
-    id: "3",
-    name: "이름이",
-    image: "https://picsum.photos/id/227/64/64",
-    birth: "981112",
-    gender: "여",
-    job: "대학생",
-  },
-];
+//info 는 이 코드에서 삭제함. 새로 받아올 것.
+interface IInfo {
+  id: string;
+  name: string;
+  image: string;
+  birth: string;
+  gender: string;
+  job: string;
+}
 
 function App() {
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [customerData, setCustomerData] = useState<IInfo[]>();
+
+  const getData = async () => {
+    const url = "/api/customers/"; //localhost:5050 빼니까 됐음.
+    await fetch(url, { method: "GET" })
+      .then((res) => res.json())
+      .then((res) => {
+        setCustomerData(res);
+        setIsLoading(false);
+      })
+      .catch((err) => console.log("[에러 발생]", err));
+  };
+
+  useEffect(() => {
+    console.log("useEffect 실행");
+    getData();
+  }, []);
+
+  console.log(customerData);
+  console.log(isLoading);
+
   return (
     <>
       <Table>
         <CustomTableHead>
           <TableRow>
-            <TableCell>번호</TableCell>
-            <TableCell>사진</TableCell>
-            <TableCell>이름</TableCell>
-            <TableCell>생년월일</TableCell>
-            <TableCell>성별</TableCell>
-            <TableCell>직업</TableCell>
+            <CustomTableCell>번호</CustomTableCell>
+            <CustomTableCell>사진</CustomTableCell>
+            <CustomTableCell>이름</CustomTableCell>
+            <CustomTableCell>생년월일</CustomTableCell>
+            <CustomTableCell>성별</CustomTableCell>
+            <CustomTableCell>직업</CustomTableCell>
           </TableRow>
         </CustomTableHead>
-        <TableBody>
-          {info.map((info, index) => (
-            <Customer key={index} info={info} />
-          ))}
-        </TableBody>
+
+        {isLoading ? (
+          <TableBody>
+            <TableRow style={{ height: "calc(100vh - 57px" }}>
+              <TableCell align="center" colSpan={6}>
+                <CircularProgress />
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        ) : (
+          <TableBody>
+            {customerData?.map((info, index) => (
+              <Customer key={index} info={info} />
+            ))}
+          </TableBody>
+        )}
       </Table>
     </>
   );
@@ -74,7 +82,7 @@ export default App;
 
 const CustomTableHead = styled(TableHead)`
   background: #1a1a1a;
-  * {
-    color: #fff;
-  }
+`;
+const CustomTableCell = styled(TableCell)`
+  color: #fff;
 `;
