@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
 import Customer from "./components/Customer";
+import CustomerAdd from "./components/CustomerAdd";
 import {
   styled,
   Table,
@@ -11,12 +12,11 @@ import {
   CircularProgress,
 } from "@mui/material";
 
-//info 는 이 코드에서 삭제함. 새로 받아올 것.
 interface IInfo {
   id: string;
   name: string;
   image: string;
-  birth: string;
+  birthday: string;
   gender: string;
   job: string;
 }
@@ -37,12 +37,8 @@ function App() {
   };
 
   useEffect(() => {
-    console.log("useEffect 실행");
     getData();
   }, []);
-
-  console.log(customerData);
-  console.log(isLoading);
 
   return (
     <>
@@ -74,6 +70,7 @@ function App() {
           </TableBody>
         )}
       </Table>
+      <CustomerAdd />
     </>
   );
 }
