@@ -11,7 +11,7 @@ interface IData {
 
 const CustomerAdd = () => {
   const [userInfo, setUserInfo] = useState<IData>({
-    file: null, //바이트 형태의 데이터 의미
+    file: null, //바이트 형태의 데이터 의미?
     username: "",
     birthday: "",
     gender: "",
@@ -29,6 +29,7 @@ const CustomerAdd = () => {
 
   const handleUpload = (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
+    //react는 바뀐 부분만 렌더링하기 때문에 데이터가 추가되면 다시 받아와야 한다.
     console.log("submit 실행");
     const { file, username, birthday, gender, job } = userInfo;
     if (!file) {
@@ -57,6 +58,16 @@ const CustomerAdd = () => {
       .catch((error) => {
         console.error("Upload failed:", error);
       });
+
+    //userInfo 초기화
+    setUserInfo({
+      file: null,
+      username: "",
+      birthday: "",
+      gender: "",
+      job: "",
+    });
+    window.location.reload();
   };
 
   console.log("[userInfo]", userInfo);

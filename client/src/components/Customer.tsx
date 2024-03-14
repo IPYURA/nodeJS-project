@@ -15,7 +15,7 @@ const Customer = ({ info }: { info: IInfo }) => {
     <TableRow>
       <TableCell>{info.id}</TableCell>
       <TableCell>
-        <img src={info.image} alt="profile"></img>
+        <img src={info.image} alt="profile" style={{width:"64px" ,height: "64px"}}></img>
       </TableCell>
       <TableCell>{info.name}</TableCell>
       <TableCell>{info.birthday}</TableCell>
