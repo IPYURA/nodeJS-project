@@ -40,6 +40,21 @@ function App() {
     getData();
   }, []);
 
+  const stateRefresh = () => {
+    console.log("State 리프레쉬");
+    setCustomerData([
+      {
+        id: "",
+        name: "",
+        image: "",
+        birthday: "",
+        gender: "",
+        job: "",
+      },
+    ]);
+    getData();
+  };
+
   return (
     <>
       <Table>
@@ -51,6 +66,7 @@ function App() {
             <CustomTableCell>생년월일</CustomTableCell>
             <CustomTableCell>성별</CustomTableCell>
             <CustomTableCell>직업</CustomTableCell>
+            <CustomTableCell>설정</CustomTableCell>
           </TableRow>
         </CustomTableHead>
 
@@ -65,12 +81,12 @@ function App() {
         ) : (
           <TableBody>
             {customerData?.map((info, index) => (
-              <Customer key={index} info={info} />
+              <Customer key={index} info={info} stateRefresh={stateRefresh}/>
             ))}
           </TableBody>
         )}
       </Table>
-      <CustomerAdd />
+      <CustomerAdd stateRefresh={stateRefresh} />
     </>
   );
 }

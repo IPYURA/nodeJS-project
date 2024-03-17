@@ -39,16 +39,19 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage }); //const storage부터 여기까지가 이후 코드
 
 app.get("/api/customers", (req, res) => {
-  connection.query("SELECT * FROM CUSTOMER", (err, rows, fields) => {
-    res.send(rows);
-  });
+  connection.query(
+    "SELECT * FROM CUSTOMER WHERE isDeleted = 0",
+    (err, rows, fields) => {
+      res.send(rows);
+    }
+  );
 });
 
 app.use("/image", express.static("./upload")); //upload 폴더를 공유할 수 있도록
 //upload폴더에 직접적으로 접근할 수 없도록 image라는 경로로 표시하고 실제 연결되는 폴더를 upload로 해주는 거
 
 app.post("/api/customers", upload.single("image"), (req, res) => {
-  let sql = "INSERT INTO CUSTOMER VALUES (null, ?, ?, ?, ?, ?)";
+  let sql = "INSERT INTO CUSTOMER VALUES (null, ?, ?, ?, ?, ?, now(), 0)";
   let image = "/image/" + req.file.filename; //파일의 저장위치 주소를 sql에 저장 //!!이 부분 "/image" 였는데 내가 고침
   let name = req.body.name;
   let birthday = req.body.birthday;
@@ -58,6 +61,14 @@ app.post("/api/customers", upload.single("image"), (req, res) => {
   let params = [image, name, birthday, gender, job];
   connection.query(sql, params, (err, rows, fields) => {
     res.send(rows); //client에게 메세지 전달
+  });
+});
+
+app.delete("/api/customers/:id", (req, res) => {
+  let sql = `UPDATE CUSTOMER SET isDeleted = 1 WHERE id = ?`;
+  let params = [req.params.id];
+  connection.query(sql, params, (err, rows, fields) => {
+    res.send(rows);
   });
 });
 

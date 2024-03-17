@@ -8,8 +8,11 @@ interface IData {
   gender: string;
   job: string;
 }
+interface Ifunc {
+  stateRefresh: () => void;
+}
 
-const CustomerAdd = () => {
+const CustomerAdd = ({ stateRefresh }: Ifunc) => {
   const [userInfo, setUserInfo] = useState<IData>({
     file: null, //바이트 형태의 데이터 의미?
     username: "",
@@ -54,6 +57,7 @@ const CustomerAdd = () => {
       .post("/api/customers", formData, config)
       .then((response) => {
         console.log("Upload successful:", response.data);
+        stateRefresh(); //고객 데이터를 받고 나서 수행되도록
       })
       .catch((error) => {
         console.error("Upload failed:", error);
@@ -67,7 +71,8 @@ const CustomerAdd = () => {
       gender: "",
       job: "",
     });
-    window.location.reload();
+    // window.location.reload();
+    
   };
 
   console.log("[userInfo]", userInfo);
