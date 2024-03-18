@@ -51,7 +51,7 @@ app.use("/image", express.static("./upload")); //upload 폴더를 공유할 수 
 //upload폴더에 직접적으로 접근할 수 없도록 image라는 경로로 표시하고 실제 연결되는 폴더를 upload로 해주는 거
 
 app.post("/api/customers", upload.single("image"), (req, res) => {
-  let sql = "INSERT INTO CUSTOMER VALUES (null, ?, ?, ?, ?, ?, now(), 0)";
+  let sql = "INSERT INTO CUSTOMER VALUES (null, ?, ?, ?, ?, ?, 0, now())";
   let image = "/image/" + req.file.filename; //파일의 저장위치 주소를 sql에 저장 //!!이 부분 "/image" 였는데 내가 고침
   let name = req.body.name;
   let birthday = req.body.birthday;

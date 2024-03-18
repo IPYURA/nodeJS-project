@@ -1,24 +1,63 @@
-import React, { ChangeEvent } from 'react'
+import React, { useState } from "react";
+import {
+  Dialog,
+  DialogActions,
+  DialogTitle,
+  DialogContent,
+  Button,
+  Typography,
+  styled,
+} from "@mui/material";
 
-const CustomerDelete = ({cusID, stateRefresh}:{cusID: any, stateRefresh:()=>void}) => {
-    const deleteCustomer = (id:number) => {
-        const url = `/api/customers/` + id;
-        console.log("[url]",url);
-        fetch(url, {method: "DELETE"});
-        stateRefresh();
-    }
+const CustomerDelete = ({
+  cusID,
+  stateRefresh,
+}: {
+  cusID: any;
+  stateRefresh: () => void;
+}) => {
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
 
-    // const onClickDelete = (e:ChangeEvent<HTMLElement>) => {
-    //     console.log(cusID);
-    //     console.log(typeof cusID);
+  const onClickOpen = () => {
+    setModalOpen(!modalOpen);
+  };
 
-    // }
+  const deleteCustomer = (id: number) => {
+    const url = `/api/customers/` + id;
+    console.log("[url]", url);
+    fetch(url, { method: "DELETE" });
+    stateRefresh();
+  };
 
   return (
-    <button onClick={()=>deleteCustomer(cusID)}>
+    <>
+      <Button variant="contained" color="secondary" onClick={onClickOpen}>
         삭제
-    </button>
-  )
-}
+      </Button>
+      <Dialog open={modalOpen}>
+        <DialogTitle>삭제하기</DialogTitle>
+        <DialogContent>
+          <Typography gutterBottom>선택한 고객 정보가 삭제됩니다.</Typography>
+        </DialogContent>
+        <ButtonWrap>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => deleteCustomer(cusID)}
+          >
+            삭제
+          </Button>
+          <Button variant="outlined" color="primary" onClick={onClickOpen}>
+            취소
+          </Button>
+        </ButtonWrap>
+      </Dialog>
+    </>
+  );
+};
 
-export default CustomerDelete
+export default CustomerDelete;
+
+const ButtonWrap = styled(DialogActions)`
+  padding: 0 24px 16px;
+`;

@@ -60,7 +60,7 @@ function App() {
       <Table>
         <CustomTableHead>
           <TableRow>
-            <CustomTableCell>번호</CustomTableCell>
+            <CustomTableCell>ID</CustomTableCell>
             <CustomTableCell>사진</CustomTableCell>
             <CustomTableCell>이름</CustomTableCell>
             <CustomTableCell>생년월일</CustomTableCell>
@@ -72,16 +72,16 @@ function App() {
 
         {isLoading ? (
           <TableBody>
-            <TableRow style={{ height: "calc(100vh - 57px" }}>
-              <TableCell align="center" colSpan={6}>
+            <TableRow style={{ height: "calc(100vh - 58px" }}>
+              <TableCell align="center" colSpan={7}>
                 <CircularProgress />
               </TableCell>
             </TableRow>
           </TableBody>
         ) : (
-          <TableBody>
+          <TableBody style={{ overflow: "scroll" }}>
             {customerData?.map((info, index) => (
-              <Customer key={index} info={info} stateRefresh={stateRefresh}/>
+              <Customer key={index} info={info} stateRefresh={stateRefresh} />
             ))}
           </TableBody>
         )}
