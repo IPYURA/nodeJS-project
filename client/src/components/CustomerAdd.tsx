@@ -12,6 +12,7 @@ import {
   Button,
   styled,
 } from "@mui/material";
+import NoticeModal from "./NoticeModal";
 
 interface IData {
   file: File | null;
@@ -26,8 +27,9 @@ interface Ifunc {
 
 const CustomerAdd = ({ stateRefresh }: Ifunc) => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [secondModalOpen, setsecondModalOpen] = useState<boolean>(false);
   const [userInfo, setUserInfo] = useState<IData>({
-    file: null, //바이트 형태의 데이터 의미?
+    file: null,
     username: "",
     birthday: "",
     gender: "",
@@ -45,54 +47,56 @@ const CustomerAdd = ({ stateRefresh }: Ifunc) => {
 
   const handleUpload = (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
-    //react는 바뀐 부분만 렌더링하기 때문에 데이터가 추가되면 다시 받아와야 한다.
-    console.log("submit 실행");
-    const { file, username, birthday, gender, job } = userInfo;
-    if (!file) {
-      console.log("No file selected.");
-      return;
-    }
-    const formData = new FormData();
-    formData.append("name", username);
-    formData.append("image", file);
-    formData.append("birthday", birthday);
-    formData.append("gender", gender);
-    formData.append("job", job);
-    //id는 어캐함?
+    const valid = checkValid();
+    if (valid) {
+      const { file, username, birthday, gender, job } = userInfo;
+      const formData = new FormData();
+      formData.append("name", username);
+      formData.append("image", file!);
+      formData.append("birthday", birthday);
+      formData.append("gender", gender);
+      formData.append("job", job);
+      const config = {
+        headers: {
+          "content-type": "multipart/form-data", //전달하는 요소에 파일이 포함된 경우 설정해줘야 한다.
+        },
+      };
+      axios
+        .post("/api/customers", formData, config)
+        .then((response) => {
+          console.log("Upload successful:", response.data);
+          stateRefresh(); //고객 데이터를 받고 나서 수행되도록
+        })
+        .catch((error) => {
+          console.error("Upload failed:", error);
+        });
 
-    const config = {
-      headers: {
-        "content-type": "multipart/form-data", //전달하는 요소에 파일이 포함된 경우 설정해줘야 한다.
-      },
-    };
-
-    axios
-      .post("/api/customers", formData, config)
-      .then((response) => {
-        console.log("Upload successful:", response.data);
-        stateRefresh(); //고객 데이터를 받고 나서 수행되도록
-      })
-      .catch((error) => {
-        console.error("Upload failed:", error);
+      setUserInfo({
+        file: null,
+        username: "",
+        birthday: "",
+        gender: "",
+        job: "",
       });
-
-    //userInfo 초기화
-    setUserInfo({
-      file: null,
-      username: "",
-      birthday: "",
-      gender: "",
-      job: "",
-    });
-    setModalOpen(false);
-    // window.location.reload();
+      setModalOpen(false);
+    } else {
+      setsecondModalOpen(true);
+    }
   };
 
   const onClickOpen = () => {
     setModalOpen(!modalOpen);
   };
+  const checkValid = () => {
+    return userInfo.file === null ||
+      userInfo.username === "" ||
+      userInfo.birthday === "" ||
+      userInfo.gender === "" ||
+      userInfo.job === ""
+      ? false
+      : true;
+  };
 
-  console.log("[userInfo]", userInfo); //콘솔 나중에 지우기
   return (
     <div style={{ textAlign: "center" }}>
       <AddButton variant="contained" color="primary" onClick={onClickOpen}>
@@ -122,7 +126,6 @@ const CustomerAdd = ({ stateRefresh }: Ifunc) => {
               value={userInfo.username}
               onChange={handleValueChange}
               placeholder="ex) 홍길동"
-              required
               size="small"
             />
             <TextField
@@ -137,45 +140,28 @@ const CustomerAdd = ({ stateRefresh }: Ifunc) => {
               value={userInfo.birthday}
               onChange={handleValueChange}
               placeholder="ex) 980101"
-              required
               size="small"
             />
-
             <RadioGroup
               value={userInfo.gender}
               name="gender"
               onChange={handleValueChange}
               row
             >
-              <FormControlLabel
-                value="남자"
-                control={<Radio required />}
-                label="남자"
-              />
-              <FormControlLabel
-                value="여자"
-                control={<Radio required />}
-                label="여자"
-              />
+              <FormControlLabel value="남자" control={<Radio />} label="남자" />
+              <FormControlLabel value="여자" control={<Radio />} label="여자" />
             </RadioGroup>
-
             <TextField
               label="직업"
               type="text"
               name="job"
               value={userInfo.job}
               onChange={handleValueChange}
-              required
               size="small"
             />
           </DialogContent>
           <DialogActions>
-            <Button
-              variant="contained"
-              color="primary"
-              type="submit"
-              // onClick={onClickOpen}
-            >
+            <Button variant="contained" color="primary" type="submit">
               추가
             </Button>
             <Button variant="outlined" color="primary" onClick={onClickOpen}>
@@ -184,6 +170,8 @@ const CustomerAdd = ({ stateRefresh }: Ifunc) => {
           </DialogActions>
         </form>
       </Dialog>
+
+      <NoticeModal isOpen={secondModalOpen} closeModal={setsecondModalOpen} />
     </div>
   );
 };
@@ -199,6 +187,7 @@ const FileLabel = styled("label")({
   background: "#1976D2",
   color: "#fff",
   marginBottom: "10px",
+  cursor: "pointer",
 });
 
 const AddButton = styled(Button)`

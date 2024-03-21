@@ -20,8 +20,7 @@ const connection = mysql.createConnection({
 });
 connection.connect();
 
-const multer = require("multer"); //multer 확장자 유지해서 저장??
-// const upload = multer({ dest: "./upload" }); //이 한줄이 원래 코드
+const multer = require("multer");
 const storage = multer.diskStorage({
   destination: "./upload",
   filename: function (req, file, cb) {
@@ -36,7 +35,7 @@ const storage = multer.diskStorage({
     );
   },
 });
-const upload = multer({ storage: storage }); //const storage부터 여기까지가 이후 코드
+const upload = multer({ storage: storage });
 
 app.get("/api/customers", (req, res) => {
   connection.query(
@@ -57,10 +56,9 @@ app.post("/api/customers", upload.single("image"), (req, res) => {
   let birthday = req.body.birthday;
   let gender = req.body.gender;
   let job = req.body.job;
-  //   console.log("[data]:", image,name,birthday,gender,job);
   let params = [image, name, birthday, gender, job];
   connection.query(sql, params, (err, rows, fields) => {
-    res.send(rows); //client에게 메세지 전달
+    res.send(rows);
   });
 });
 
@@ -73,19 +71,3 @@ app.delete("/api/customers/:id", (req, res) => {
 });
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
-
-// const path = require("path");
-// const publicPath = path.join(__dirname, "public");
-// app.use(express.static(publicPath));
-// const upload = multer({
-//   storage: multer.diskStorage({
-//     filename(req, file, done) {
-//       console.log(file);
-//       done(null, file.originalname);
-//     },
-//     destination(req, file, done) {
-//       console.log(file);
-//       done(null, path.join(__dirname, "public"));
-//     },
-//   }),
-// });

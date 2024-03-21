@@ -41,7 +41,6 @@ function App() {
   }, []);
 
   const stateRefresh = () => {
-    console.log("State 리프레쉬");
     setCustomerData([
       {
         id: "",
@@ -55,6 +54,10 @@ function App() {
     getData();
   };
 
+  console.log("customerData: ", customerData);
+  if (customerData !== undefined) {
+    console.log("customerData-ID: ", typeof customerData[0].id);
+  }
   return (
     <>
       <Table>

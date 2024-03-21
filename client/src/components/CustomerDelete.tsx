@@ -13,7 +13,7 @@ const CustomerDelete = ({
   cusID,
   stateRefresh,
 }: {
-  cusID: any;
+  cusID: string;
   stateRefresh: () => void;
 }) => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
@@ -22,7 +22,7 @@ const CustomerDelete = ({
     setModalOpen(!modalOpen);
   };
 
-  const deleteCustomer = (id: number) => {
+  const deleteCustomer = (id: string) => {
     const url = `/api/customers/` + id;
     console.log("[url]", url);
     fetch(url, { method: "DELETE" });
